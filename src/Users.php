@@ -27,22 +27,25 @@ class Users {
 	 */
 	public function get_all_columns() {
 		/** Return cache. */
-		$result = wp_cache_get( 'uewm_get_all_columns' );
-		if ( false !== $result ) {
-			return $result;
+		$result = wp_cache_get( 'uewm_get_all_columns' ); // Get cache.
+		if ( false !== $result ) { // If cached.
+		
+			return $result; // Return cache.
 		}
 
 		/** SQL on WP. */
 		global $wpdb;
 
 		/** Get `wp_users` column names. */
-		$sql     = "SELECT * FROM {$wpdb->users} LIMIT 1";
-		$md5     = md5( $sql );
-		$columns = wp_cache_get( $md5 );
-		if ( false === $columns ) {
-			$wpdb->get_row( $sql );
-			$columns = $wpdb->get_col_info();
-			wp_cache_set( $md5, $columns );
+		$sql     = "SELECT * FROM {$wpdb->users} LIMIT 1"; // Get one row.
+		$md5     = md5( $sql ); // Create a hash using the SQL as key.
+		$columns = wp_cache_get( $md5 );// Get cache.
+	
+		if ( false === $columns ) {// If not cached.
+			$wpdb->get_row( $sql ); // Run SQL.
+			$columns = $wpdb->get_col_info(); // Get columns.
+			wp_cache_set( $md5, $columns ); // Save cache.
+		
 		}
 
 		/** Get metadata names. */
@@ -54,10 +57,14 @@ class Users {
 			wp_cache_set( $md5, $meta_columns );
 		}
 
+		//* select all meta_data from wpdb->usermeta
+		
+		
+
 		/** Return. */
-		$result = array_merge( $columns, $meta_columns );
-		$result = $this->value_to_keys( $result );
-		wp_cache_set( 'uewm_get_all_columns', $result );
+		$result = array_merge( $columns, $meta_columns ); // Merge columns and metadata.
+		$result = $this->value_to_keys( $result ); // Set key = value.
+		wp_cache_set( 'uewm_get_all_columns', $result ); // Save cache.
 		return $result;
 	}
 
